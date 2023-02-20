@@ -1,0 +1,104 @@
+{
+    "AWSTemplateFormatVersion": "2010-09-09",
+    "Description": "Creating a Simple Clouformation Template",
+    "Parameters": {
+        "KeyName": {
+            "Description": "Name of an existing EC2 KeyPair to enable SSH access to the instance",
+            "Type": "AWS::EC2::KeyPair::KeyName",
+            "ConstraintDescription": "must be the name of an existing EC2 KeyPair."
+        },
+        "SecGroup": {
+            "Description": "Valid Security group",
+            "Type": "List<AWS::EC2::SecurityGroup::Id>",
+            "Default": "sg-0f443af7ed238ead0"
+        }
+    },
+    "Resources": {
+        "EC2Instance": {
+            "Type": "AWS::EC2::Instance",
+            "Properties": {
+                "InstanceType": "t2.micro",
+                "SecurityGroupIds": {
+                    "Ref": "SecGroup"
+                },
+                "KeyName": {
+                    "Ref": "KeyName"
+                },
+                "ImageId": "ami-0d09654d0a20d3ae2",
+                "SubnetId": "subnet-b2882dfe",
+                "AvailabilityZone": "eu-west-2b",
+                "Tags": [
+                    {
+                        "Key": "Name",
+                        "Value": "MyOwnStack"
+                    },
+                    {
+                        "Key": "auto-delete",
+                        "Value": "no"
+                    }
+                ]
+            }
+        },
+        "NewVolume": {
+            "Type": "AWS::EC2::Volume",
+            "Properties": {
+                "Size": "15",
+                "AvailabilityZone": "eu-west-2b",
+                "VolumeType": "gp2",
+                "Tags": [
+                    {
+                        "Key": "Volume",
+                        "Value": "REDHAT"
+                    }
+                ]
+            }
+        },
+        "MountPoint": {
+            "Type": "AWS::EC2::VolumeAttachment",
+            "Properties": {
+                "InstanceId": {
+                    "Ref": "EC2Instance"
+                },
+                "VolumeId": {
+                    "Ref": "NewVolume"
+                },
+                "Device": "/dev/sdh"
+            }
+        }
+    },
+    "Outputs": {
+        "InstanceId": {
+            "Description": "InstanceId of the newly created EC2 instance",
+            "Value": {
+                "Ref": "EC2Instance"
+            }
+        },
+        "AZ": {
+            "Description": "Availability Zone of the newly created EC2 instance",
+            "Value": {
+                "Fn::GetAtt": [
+                    "EC2Instance",
+                    "AvailabilityZone"
+                ]
+            }
+        },
+        "PublicDNS": {
+            "Description": "Public DNSName of the newly created EC2 instance",
+            "Value": {
+                "Fn::GetAtt": [
+                    "EC2Instance",
+                    "PublicDnsName"
+                ]
+            }
+        },
+        "PublicIP": {
+            "Description": "Public IP address of the newly created EC2 instance",
+            "Value": {
+                "Fn::GetAtt": [
+                    "EC2Instance",
+                    "PublicIp"
+                ]
+            }
+        }
+    }
+}
