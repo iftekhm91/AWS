@@ -1,0 +1,52 @@
+Description: Creating a Backup vault
+Parameters: 
+  BackupVaultName: 
+    Type: String
+    Default: "ProdOps"
+  BucketName:
+    Type: String
+    Default: ""
+  InstanceType: 
+    Type: String
+    Default: "t2.micro" 
+  SecurityGroup: 
+    Type: String
+    Default: ""
+  SubnetID:
+    Type: String
+    Default: "subnet-b2882dfe"
+  AvailabilityZone: 
+    Type: String
+    Default: "eu-west-2b"
+  VpcID: 
+    Type: String
+    Default: ""
+  RootVolume: 
+    Type: String
+    Default: ""
+  ImageId: 
+    Type: String
+    Default: "ami-035c5dc086849b5de"
+Resources: 
+  BackupVault: 
+    Type: "AWS::Backup::BackupVault"
+    Properties: 
+      BackupVaultName: !Ref BackupVaultName
+  S3Bucket: 
+    Type: "AWS::S3::Bucket"
+    Properties: 
+      BucketName: !Ref BucketName 
+  EC2Instance: 
+    Type: AWS::EC2::Instance 
+    Properties: 
+      AvailabilityZone: !Ref AvailabilityZone 
+      ImageId: !Ref ImageId
+      InstanceType: !Ref InstanceType 
+      SecurityGroupIds: 
+        - !Ref SecurityGroup
+      SubnetId: !Ref SubnetID 
+
+
+
+
+
