@@ -1,3 +1,5 @@
+# This file will contain useful aws cli commands
+
 # Get the list of all instance Id's and export it to a file 
 aws ec2 describe-instances --no-cli-pager | grep -i InstanceId | awk '{print $2}' | sed 's/[",]//g' > instances
 
