@@ -1,0 +1,23 @@
+# Get the list of all instance Id's and export it to a file 
+aws ec2 describe-instances --no-cli-pager | grep -i InstanceId | awk '{print $2}' | sed 's/[",]//g' > instances
+
+# List Recovery points of an Ec2 instance/Resource
+aws backup list-recovery-points-by-resource --resource-arn=arn:aws:ec2:eu-west-2:065497768294:instance/i-0cd65a22a97399b00
+
+# List all recovery point arn's for a particular resource
+aws backup list-recovery-points-by-resource --resource-arn=arn:aws:ec2:eu-west-2:065497768294:instance/i-0cef9645d1490cac9 --no-cli-pager | grep -i RecoveryPointArn | awk '{print $2}' | sed 's/[",]//g'
+
+# For loop to delete all recovery points for a resource 
+for i in `cat delete-recovery-points`; do aws backup delete-recovery-point --backup-vault-name=AllBackus --recovery-point-arn=$i; done
+
+# List all recovery points in a Backup Vault
+aws backup list-recovery-points-by-backup-vault --backup-vault-name=AllBackus --no-cli-pager | grep -i RecoveryPointArn | awk '{print $2}' | sed 's/[",]//g'
+
+# Copy all contents of a directory to s3 bucket recursively 
+aws s3 cp aws-cli s3://iftekhm12 --recursive
+
+# Delete all objects recursively 
+aws s3 rm s3://iftekhm12 --recursive
+
+# Describe ec2-instances filers
+aws ec2 describe-instances --region=ap-southeast-2 --query 'Reservations[*].Instances[*].{Instance:InstanceId,Type:InstanceType,KeyUsed:KeyName,Subnet:SubnetId}' --output yaml
