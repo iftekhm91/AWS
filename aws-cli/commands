@@ -23,3 +23,6 @@ aws s3 rm s3://iftekhm12 --recursive
 
 # Describe ec2-instances filers
 aws ec2 describe-instances --region=ap-southeast-2 --query 'Reservations[*].Instances[*].{Instance:InstanceId,Type:InstanceType,KeyUsed:KeyName,Subnet:SubnetId}' --output yaml
+
+# Get secret value from AWS Secrets manager
+aws secretsmanager get-secret-value --secret-id=iftekhm91-git
