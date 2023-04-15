@@ -78,3 +78,52 @@ Resources:
        GatewayId:
          Ref: MyIGW
 
+
+  WebTierSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    DependsOn: VpcDev
+    Properties:
+     GroupDescription: Allow http to client host
+     VpcId:
+       Ref: VpcDev
+     SecurityGroupIngress:
+      - IpProtocol: tcp
+        FromPort: 80
+        ToPort: 80
+        CidrIp: 0.0.0.0/0
+      - IpProtocol: tcp
+        FromPort: 22
+        ToPort: 22
+        CidrIp: 0.0.0.0/0
+     SecurityGroupEgress:
+      - IpProtocol: tcp
+        FromPort: 0
+        ToPort: 65535
+        CidrIp: 0.0.0.0/0
+
+
+  AppEc2: 
+    Type: "AWS::EC2::Instance"
+    Properties: 
+      ImageId: "ami-08932203bf374b642"
+      AvailabilityZone: "eu-west-2a"
+      InstanceType: "t3.medium"
+      KeyName: "lon"
+      SubnetId: 
+        Ref: PubSubnet
+      SecurityGroupIds:
+            - !GetAtt "WebTierSecurityGroup.GroupId"
+      IamInstanceProfile: "AWSSupportPatchwork-SSMRoleForInstances"
+      Tags: 
+        - Key: "Name"
+          Value: "LandingZone-EC2"
+      UserData: 
+        Fn::Base64:
+         !Sub |
+          #!/bin/bash
+          # This script will create  simple website for ALB purposes
+          yum -y install httpd
+          systemctl start httpd
+          systemctl enable httpd
+          echo "<h1> Hello World from $(hostname -f) </h1>" > /var/www/html/index.html
+
