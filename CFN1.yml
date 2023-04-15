@@ -1,0 +1,35 @@
+Description: "Creating a simple web application using CFN"
+Resources: 
+  MyEc2ForCBA: 
+    Type: "AWS::EC2::Instance"
+    Properties: 
+      ImageId: "ami-08932203bf374b642"
+      AvailabilityZone: "eu-west-2a"
+      InstanceType: "t3.medium"
+      KeyName: !Ref MyNewKeypair
+      SubnetId: "subnet-4830a732"
+      SecurityGroupIds: 
+        - "sg-0f443af7ed238ead0"
+      IamInstanceProfile: "AWSSupportPatchwork-SSMRoleForInstances"
+      UserData: 
+        Fn::Base64:
+         !Sub |
+          #!/bin/bash
+          # This script will create  simple website for ALB purposes
+          yum -y update
+          yum -y install httpd
+          systemctl start httpd
+          systemctl enable httpd
+          echo "<h1> Hello World from $(hostname -f) </h1>" > /var/www/html/index.html
+  MyS3Bucket:
+    Type: "AWS::S3::Bucket"
+    Properties: 
+      BucketName: "iftekhm-test-onboarding-123321"
+  MyNewKeypair:
+    Type: "AWS::EC2::KeyPair"
+    Properties: 
+      KeyName: "London-1"
+  CloudFormationTestBackupVaul:
+    Type: "AWS::Backup::BackupVault"
+    Properties:
+      BackupVaultName: hello-snap-backups-1
