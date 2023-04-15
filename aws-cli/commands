@@ -26,3 +26,6 @@ aws ec2 describe-instances --region=ap-southeast-2 --query 'Reservations[*].Inst
 
 # Get secret value from AWS Secrets manager
 aws secretsmanager get-secret-value --secret-id=iftekhm91-git
+
+#Just get the secret value
+aws secretsmanager get-secret-value --secret-id=iftekhm91-git | grep Sec | awk '{print $2}' | sed 's/[",]//g'
