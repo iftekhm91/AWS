@@ -3,7 +3,7 @@ Resources:
   MyEc2ForCBA: 
     Type: "AWS::EC2::Instance"
     Properties: 
-      ImageId: "ami-08932203bf374b642"
+      ImageId: ""
       AvailabilityZone: "eu-west-2a"
       InstanceType: "t3.medium"
       KeyName: !Ref MyNewKeypair
