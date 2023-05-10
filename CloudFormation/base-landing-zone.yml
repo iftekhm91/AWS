@@ -96,16 +96,14 @@ Resources:
         ToPort: 22
         CidrIp: 0.0.0.0/0
      SecurityGroupEgress:
-      - IpProtocol: tcp
-        FromPort: 0
-        ToPort: 65535
+      - IpProtocol: -1
         CidrIp: 0.0.0.0/0
 
 
   AppEc2: 
     Type: "AWS::EC2::Instance"
     Properties: 
-      ImageId: ""
+      ImageId: "ami-0a242269c4b530c5e"
       AvailabilityZone: "eu-west-2a"
       InstanceType: "t3.medium"
       KeyName: "lon"
@@ -113,7 +111,6 @@ Resources:
         Ref: PubSubnet
       SecurityGroupIds:
             - !GetAtt "WebTierSecurityGroup.GroupId"
-      IamInstanceProfile: "AWSSupportPatchwork-SSMRoleForInstances"
       Tags: 
         - Key: "Name"
           Value: "LandingZone-EC2"
@@ -126,4 +123,8 @@ Resources:
           systemctl start httpd
           systemctl enable httpd
           echo "<h1> Hello World from $(hostname -f) </h1>" > /var/www/html/index.html
+          yum -y install nfs-utils
+
+
+
 
