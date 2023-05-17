@@ -1,0 +1,16 @@
+Description: Pass in as parameters
+Parameters:
+  BucketName:
+    Description: Meaningful name of the bucket
+    Type: String
+
+Resources:
+  CreateBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Ref BucketName
+
+Outputs:
+  Name:
+    Description: This is the name of the bucket
+    Value: !Ref CreateBucket

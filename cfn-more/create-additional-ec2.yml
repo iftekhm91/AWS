@@ -1,0 +1,26 @@
+Resources:
+  AppEc2: 
+    Type: "AWS::EC2::Instance"
+    Properties: 
+      ImageId: "ami-0a242269c4b530c5e"
+      AvailabilityZone: "eu-west-2a"
+      InstanceType: "t3.medium"
+      KeyName: "lon"
+      SubnetId: "subnet-0335b8fbabf052158"
+      SecurityGroupIds:
+        - "sg-0d9fe43ffc4db7414"
+      Tags: 
+        - Key: "Name"
+          Value: "LandingZone-EC2-2"
+      UserData: 
+        Fn::Base64:
+         !Sub |
+          #!/bin/bash
+          # This script will create  simple website for ALB purposes
+          yum -y install httpd
+          systemctl start httpd
+          systemctl enable httpd
+          echo "<h1> Hello World from $(hostname -f) </h1>" > /var/www/html/index.html
+          yum -y install nfs-utils
+          mkdir /mnt/efs/
+          mount -t nfs -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport fs-0b8c865a87c572741.efs.eu-west-2.amazonaws.com:/ /mnt/efs/

@@ -1,0 +1,35 @@
+Description: Creates an environment based on Linux or Windows
+Parameters:
+  Enviornment: 
+    Type: String
+    Default: Linux
+    AllowedValues: 
+      - Windows
+      - Linux
+    Description: Please choose the Enviornment type
+
+Mappings:
+  PickAMI:
+    ap-southeast-2:
+      Linux: ami-0d147324c76e8210a
+      Windows: ami-0de8ddabc1e41c2b7
+    eu-west-2:
+      Linux: ami-0a242269c4b530c5e
+      Windows: ami-0fe0759579a2836cc
+
+Resources:
+  KeyPair:
+    Type: AWS::EC2::KeyPair
+    Properties: 
+      KeyName: iftekh
+
+  Instance:
+    Type: AWS::EC2::Instance
+    Properties: 
+      ImageId: 
+        !FindInMap [PickAMI, !Ref "AWS::Region", !Ref Environment]
+      InstanceType: "t2.micro"
+      KeyName: !Ref KeyPair
+
+
+      

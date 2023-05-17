@@ -1,0 +1,75 @@
+Description: This tempplate will create an EC2, S3 only if needed. 
+Parameters:
+  S3Bucket:
+    Type: String
+    Default: no
+    AllowedValues: 
+      - yes
+      - no
+    Description: Do you need an S3 bucket ?
+
+  EC2InstanceType:
+    Type: String
+    Default: "t2.micro"
+    AllowedValues: 
+      - t3.medium
+      - t2.micro
+      - t2.medium
+      - t3.large
+    Description: Please choose the instance type
+
+  Ec2ImageId: 
+    Type: "AWS::EC2::Image::Id"
+    Description: Please enter the AMI id
+  
+  EC2SG:
+    Type: "AWS::EC2::SecurityGroup::Id"
+    Description: Please enter the Security Group ID. 
+  
+  EC2Subnet: 
+    Type: "AWS::EC2::Subnet::Id"
+    Description: Please enter the subnet ID.
+
+  KeyPair:
+    Type: "AWS::EC2::KeyPair::KeyName"
+    Description: Please pick the KeyPair
+
+  AZ:
+    Type: "AWS::EC2::AvailabilityZone::Name"
+    Description: "Please pick the AZ. Make sure you have a valid subnet within the AZ"
+
+
+Conditions: 
+  S3True: !Equals 
+    - !Ref S3Bucket
+    - yes 
+
+Resources: 
+  Instance:
+    Type: AWS::EC2::Instance
+    Properties: 
+      InstanceType: !Ref EC2InstanceType
+      ImageId: !Ref Ec2ImageId
+      KeyName: !Ref KeyPair
+      SubnetId: !Ref EC2Subnet
+      SecurityGroupIds: 
+        - !Ref EC2SG
+      AvailabilityZone: !Ref AZ
+
+  Bucket:
+    Type: AWS::S3::Bucket
+    Condition: S3True
+
+Outputs: 
+  InstanceID: 
+    Description: This is the Instance ID
+    Value: !Ref Instance
+  S3Bucket:
+    Condition: S3True
+    Description: Here's the s3 bucket ID
+    Value: !Ref Bucket
+
+
+
+
+  

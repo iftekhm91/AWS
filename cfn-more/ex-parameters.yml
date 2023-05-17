@@ -1,0 +1,44 @@
+Description: This template will take user inputs as a parameter
+Parameters:
+  Instancetype: 
+    Description: Please select one of the following Instance types
+    Type: String
+    Default: "t2.micro"
+    AllowedValues:
+      - "t3.medium"
+      - "t3.large"
+      - "t2.medium"
+      - "t2.micro"
+  MachineId:
+    Type: String
+    Default: "ami-0a242269c4b530c5e"
+  Subnet:
+    Type: "List<AWS::EC2::Subnet::Id>"
+    Description: Please choose a Subnet
+  SG:
+    Type: "AWS::EC2::SecurityGroup::GroupName"
+    Description: Pick a SecurityGroup
+
+
+Mappings:
+  ImageID: 
+    Linux: 
+    Windows: 
+
+
+
+Resources:
+  Instance:
+    Type: "AWS::EC2::Instance"
+    Properties:
+      ImageId: 
+        Ref: MachineId
+      InstanceType:
+        Ref: Instancetype
+      KeyName: "lon"
+      SubnetId:
+        Ref: Subnet
+      SecurityGroupIds:
+        - Ref: SG
+      
+
