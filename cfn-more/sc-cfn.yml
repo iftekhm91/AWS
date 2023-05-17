@@ -1,0 +1,34 @@
+Parameters:
+  ProductName:
+    Description: Product name
+    Type: String
+  #ProvisioningArtifactName:
+  #  Description: Name 
+  #  Type: String
+  RemoteAccessCIDR:
+    Description: Remote access IP
+    Type: String
+  VPC:
+    Description: Enter a Valid VPC ID
+    Type: String
+  KeyPair:
+    Description: Enter a valid keypair
+    Type: String
+
+
+
+Resources:
+  CreateEC2:
+    Type: "AWS::ServiceCatalog::CloudFormationProvisionedProduct"
+    Properties:
+      ProductName: !Ref ProductName
+      ProvisioningArtificatName: 'v1.0'
+      ProvisioningParameters:
+        - Key: "VPC"
+          Value: !Ref VPC
+        - Key: "RemoteAccessCIDR"
+          Value: !Ref RemoteAccessCIDR
+        - Key: "KeyPair"
+          Value: !Ref KeyPair
+
+
