@@ -1,0 +1,9 @@
+---
+- ParameterKey: ProductName
+  ParameterValue: Amazon EC2 Linux Apache Webserver
+- ParameterKey: RemoteAccessCIDR
+  ParameterValue: 0.0.0.0
+- ParameterKey: VPC
+  ParameterValue: vpc-0377acfa7d90f980f
+- ParameterKey: KeyPair
+  ParameterValue: lon

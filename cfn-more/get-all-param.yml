@@ -1,0 +1,51 @@
+Description: This template will let you spin up your own EC2 Instance
+Parameters: 
+  
+  PickInstance:
+    Default: "t2.micro"
+    AllowedValues:
+      - t2.medium
+      - t3.medium
+      - t2.micro 
+    Description: Please pick an Instance type
+    Type: String
+  
+  MachineID:
+    Type: String
+    Description: Please enter the AMI Id 
+
+  KeyPairID:
+    Type: "AWS::EC2::KeyPair::KeyName"
+    Description: Please choose the key pair
+
+  SubnetID: 
+    Type: "AWS::EC2::Subnet::Id"
+    Description: Please choose a Subnet
+
+  SecGroup:
+    Type: "AWS::EC2::SecurityGroup::Id"
+    Description: Please choose a Security Group
+
+  AvailabilityZone:
+    Type: "AWS::EC2::AvailabilityZone::Name"
+    Description: Please choose an AZ where the Instance will be deployed
+
+
+
+
+Resources: 
+  Instance:
+    Type: AWS::EC2::Instance
+    Properties: 
+      InstanceType: !Ref PickInstance
+      ImageId: !Ref MachineID
+      KeyName: !Ref KeyPairID
+      SubnetId: !Ref SubnetID
+      SecurityGroupIds: 
+        - !Ref SecGroup
+      AvailabilityZone: !Ref AvailabilityZone
+
+Outputs: 
+  InstanceID: 
+    Description: This is the Instance ID
+    Value: !Ref Instance

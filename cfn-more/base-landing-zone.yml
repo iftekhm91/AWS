@@ -1,0 +1,125 @@
+Description: "This template will create a complete landing zone"
+Resources: 
+  VpcDev:
+    Type: "AWS::EC2::VPC"
+    Properties:
+          CidrBlock: 172.16.0.0/16
+          EnableDnsSupport: 'true'
+          EnableDnsHostnames: 'true'
+          Tags:
+            - Key: vpc
+              Value: development
+  
+  PubSubnet:
+    Type: "AWS::EC2::Subnet"
+    Properties:
+      VpcId:
+        Ref: VpcDev
+      CidrBlock: 172.16.1.0/24
+      AvailabilityZone: "eu-west-2a"
+      Tags:
+      - Key: Subnet
+        Value: Public
+      MapPublicIpOnLaunch: "true"
+
+  PubSubnet2:
+    Type: "AWS::EC2::Subnet"
+    Properties:
+      VpcId:
+        Ref: VpcDev
+      CidrBlock: 172.16.2.0/24
+      AvailabilityZone: "eu-west-2b"
+      Tags:
+      - Key: Subnet
+        Value: Public-2
+      MapPublicIpOnLaunch: "true" 
+  
+  PrivSubnet: 
+    Type: "AWS::EC2::Subnet"
+    Properties:
+      VpcId:
+        Ref: VpcDev
+      CidrBlock: 172.16.3.0/24
+      AvailabilityZone: "eu-west-2b"
+      Tags:
+      - Key: Subnet
+        Value: Private
+  
+  PubRouteTable:
+    Type: "AWS::EC2::RouteTable"
+    Properties:
+      VpcId: 
+        Ref: VpcDev
+  
+  PrivRoutTable:
+    Type: "AWS::EC2::RouteTable"
+    Properties:
+      VpcId: 
+        Ref: VpcDev
+  
+  MyIGW:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+      - Key: stack
+        Value: production
+  
+  AttachGateway:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId:
+        Ref: VpcDev
+      InternetGatewayId:
+        Ref: MyIGW
+  
+  AttachRouteTable:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties: 
+      RouteTableId:
+        Ref: PubRouteTable
+      SubnetId:
+        Ref: PubSubnet
+
+  AttachRouteTable2:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties: 
+      RouteTableId:
+        Ref: PubRouteTable
+      SubnetId:
+        Ref: PubSubnet2
+      
+
+  PubRoute:
+    Type: AWS::EC2::Route
+    DependsOn: AttachGateway
+    Properties:
+       RouteTableId:
+         Ref: PubRouteTable
+       DestinationCidrBlock: 0.0.0.0/0
+       GatewayId:
+         Ref: MyIGW
+
+
+  WebTierSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    DependsOn: VpcDev
+    Properties:
+     GroupDescription: Allow http to client host
+     VpcId:
+       Ref: VpcDev
+     SecurityGroupIngress:
+      - IpProtocol: tcp
+        FromPort: 80
+        ToPort: 80
+        CidrIp: 0.0.0.0/0
+      - IpProtocol: tcp
+        FromPort: 22
+        ToPort: 22
+        CidrIp: 0.0.0.0/0
+     SecurityGroupEgress:
+      - IpProtocol: -1
+        CidrIp: 0.0.0.0/0
+
+
+
+
